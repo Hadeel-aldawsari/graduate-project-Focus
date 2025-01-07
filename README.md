@@ -134,16 +134,18 @@ Focus aims to streamline workflows, making it easier for photographers to access
 
 ---
 
-## Endpoint List with Links
+## MY Work
 
-### AdminController
+### Entity & DTO
+- **RequestEditing**   
+- **OfferEditing** 
+- **BookSpace**
+- **Shift**
+- **MyUser**
 
-1. **PUT** `/api/v1/focus/admin/activate-studio/{studio_id}`  
-   - Activate a studio account.  
-2. **PUT** `/api/v1/focus/admin/reject-studio/{studio_id}`  
-   - Reject a studio account.
+### Controller 
 
-### BookSpaceController
+#### BookSpaceController
 
 1. **GET** `/api/v1/focus/book-space/get-all`  
    - Get all bookings.  
@@ -160,29 +162,7 @@ Focus aims to streamline workflows, making it easier for photographers to access
 7. **PUT** `/api/v1/focus/book-space/accept-booking/{bookingId}`  
    - Accept a booking request.
 
-### EditorController
-
-1. **GET** `/api/v1/focus/editor/get-all`  
-   - Retrieve all editors.  
-2. **POST** `/api/v1/focus/editor/register`  
-   - Register a new editor.  
-3. **PUT** `/api/v1/focus/editor/update-editor`  
-   - Update editor details.  
-4. **DELETE** `/api/v1/focus/editor/delete-editor/{editorid}`  
-   - Delete an editor by ID.
-
-### MediaController
-
-1. **GET** `/api/v1/focus/media/photographer/count-video/{photographerId}`  
-   - Count videos uploaded by a photographer.  
-2. **GET** `/api/v1/focus/media/photographer/count-image/{photographerId}`  
-   - Count images uploaded by a photographer.  
-3. **GET** `/api/v1/focus/media/editor/get-videos/{editorId}`  
-   - Retrieve videos uploaded by an editor.  
-4. **GET** `/api/v1/focus/media/editor/get-images/{editorId}`  
-   - Retrieve images uploaded by an editor.
-
-### OfferEditingController
+#### OfferEditingController
 
 1. **GET** `/api/v1/focus/offer-editing/get-all`  
    - Retrieve all offers.  
@@ -197,48 +177,8 @@ Focus aims to streamline workflows, making it easier for photographers to access
 6. **PUT** `/api/v1/focus/offer-editing/reject/{offerId}`  
    - Reject an offer.
 
-### PhotographerController
 
-1. **GET** `/api/v1/focus/photographer/get-all`  
-   - Retrieve all photographers.  
-2. **POST** `/api/v1/focus/photographer/register`  
-   - Register a new photographer.  
-3. **PUT** `/api/v1/focus/photographer/update-photographer`  
-   - Update photographer details.  
-4. **DELETE** `/api/v1/focus/photographer/delete-photographer`  
-   - Delete a photographer.  
-5. **GET** `/api/v1/focus/photographer/get-my-rent-tools`  
-   - View rented tools.  
-6. **GET** `/api/v1/focus/photographer/get-my-rental-tools`  
-   - View tools rented out.
-
-### ProfileEditorController
-
-1. **GET** `/api/v1/focus/editor/profile/get-all`  
-   - Retrieve all editor profiles.  
-2. **GET** `/api/v1/focus/editor/profile/get-my-profile`  
-   - Retrieve editor's own profile.  
-3. **GET** `/api/v1/focus/editor/profile/get-specific-profile/{id}`  
-   - Retrieve specific editor profile by ID.  
-4. **POST** `/api/v1/focus/editor/profile/upload-media`  
-   - Upload media to profile.  
-5. **PUT** `/api/v1/focus/editor/profile/update`  
-   - Update editor profile.
-
-### ProfilePhotographerController
-
-1. **GET** `/api/v1/focus/photographer/profile/get-all`  
-   - Retrieve all photographer profiles.  
-2. **GET** `/api/v1/focus/photographer/profile/get-my-profile`  
-   - Retrieve photographer's own profile.  
-3. **GET** `/api/v1/focus/photographer/profile/get-specific-profile/{id}`  
-   - Retrieve specific photographer profile by ID.  
-4. **POST** `/api/v1/focus/photographer/profile/upload-media`  
-   - Upload media to profile.  
-5. **PUT** `/api/v1/focus/photographer/profile/update/{id}`  
-   - Update photographer profile.
-
-### RequestEditingController
+#### RequestEditingController
 
 1. **GET** `/api/v1/focus/request-editing/get-all`  
    - Retrieve all editing requests.  
@@ -263,7 +203,7 @@ Focus aims to streamline workflows, making it easier for photographers to access
 11. **PUT** `/api/v1/focus/request-editing/mark-complete/{id}`  
     - Mark an editing request as complete.
 
-### ShiftController
+#### ShiftController
 
 1. **GET** `/api/v1/focus/shift/get-all`  
    - Retrieve all shifts.  
@@ -278,7 +218,7 @@ Focus aims to streamline workflows, making it easier for photographers to access
 6. **GET** `/api/v1/focus/shift/get-by-space/{spaceId}`  
    - Retrieve shifts by space ID.
 
-### SpaceController
+#### SpaceController
 
 1. **GET** `/api/v1/focus/space/get-all-spaces`  
    - Retrieve all spaces.  
@@ -293,7 +233,7 @@ Focus aims to streamline workflows, making it easier for photographers to access
 6. **GET** `/api/v1/focus/space/get-available-spaces/{studio_id}`  
    - Retrieve available spaces for a studio.
 
-### StudioController
+#### StudioController
 
 1. **GET** `/api/v1/focus/studio/get-all`  
    - Retrieve all studios.  
@@ -306,31 +246,27 @@ Focus aims to streamline workflows, making it easier for photographers to access
 5. **GET** `/api/v1/focus/studio/get-specific-studio/{studio_id}`  
    - Retrieve specific studio details by ID.
 
-### ToolController
+      
 
-1. **GET** `/api/v1/focus/tool/get-all`  
-   - Retrieve all tools.  
-2. **POST** `/api/v1/focus/tool/add-tool`  
-   - Add a new tool.  
-3. **PUT** `/api/v1/focus/tool/update-tool/{tool_id}`  
-   - Update tool details.  
-4. **DELETE** `/api/v1/focus/tool/delete-tool/photographerid/toolid/{tool_id}`  
-   - Delete a tool.  
-5. **POST** `/api/v1/focus/tool/rent-tool/{tool_id}`  
-   - Rent a tool.  
-6. **GET** `/api/v1/focus/tool/get-tools-by-rental-number/{numberOfRental}`  
-   - Retrieve tools by number of rentals.  
-7. **GET** `/api/v1/focus/tool/get-tools-by-rental-number-or-above/{numberOfRental}`  
-   - Retrieve tools with rental numbers equal to or above a value.  
-8. **GET** `/api/v1/focus/tool/get-tools-by-rental-number-or-below/{numberOfRental}`  
-   - Retrieve tools with rental numbers equal to or below a value.  
-9. **GET** `/api/v1/focus/tool/get-my-tools`  
-   - Retrieve tools owned by the user.  
-10. **GET** `/api/v1/focus/tool/get-photographer-tools/{photographer_id}`  
-    - Retrieve tools owned by a specific photographer.
+
+
+
+
 
 
 
 Linked in : ![Bushra Ali Arishi]([https://github.com/user-attachments/assets/3fde31ab-ad29-433b-8449-c22e9e397d18](https://www.linkedin.com/in/bushra-ali-arishi/?locale=en_US))
+
+
+
+
+
+
+
+
+
+
+
+
 
   
