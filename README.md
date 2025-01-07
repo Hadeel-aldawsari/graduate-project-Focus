@@ -138,7 +138,6 @@ Focus aims to streamline workflows, making it easier for photographers to access
 
 ### Entity & DTO
 - **RequestEditing**   
-- **OfferEditing** 
 - **BookSpace**
 - **Shift**
 - **MyUser**
@@ -161,22 +160,6 @@ Focus aims to streamline workflows, making it easier for photographers to access
    - Update the status of a booking.  
 7. **PUT** `/api/v1/focus/book-space/accept-booking/{bookingId}`  
    - Accept a booking request.
-
-#### OfferEditingController
-
-1. **GET** `/api/v1/focus/offer-editing/get-all`  
-   - Retrieve all offers.  
-2. **POST** `/api/v1/focus/offer-editing/create/{id}`  
-   - Create a new offer.  
-3. **PUT** `/api/v1/focus/offer-editing/update/{id}`  
-   - Update an offer.  
-4. **DELETE** `/api/v1/focus/offer-editing/delete/{id}`  
-   - Delete an offer.  
-5. **PUT** `/api/v1/focus/offer-editing/accept/{offerId}`  
-   - Accept an offer.  
-6. **PUT** `/api/v1/focus/offer-editing/reject/{offerId}`  
-   - Reject an offer.
-
 
 #### RequestEditingController
 
