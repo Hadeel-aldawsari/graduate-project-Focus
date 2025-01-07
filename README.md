@@ -58,7 +58,7 @@ Focus aims to streamline workflows, making it easier for photographers to access
 - [Presentation](https://www.canva.com/design/DAGQ_9lAwuU/uPJlkOj0XV8sx3AN4qdTiA/edit?utm_content=DAGQ_9lAwuU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 - [PostMan api](https://documenter.getpostman.com/view/30968689/2sAXqqdNjT)
   
-    <img src="https://github.com/user-attachments/assets/e3ee79e7-eabf-4cd8-b25c-fb4b31d8e012" width="150" />
+    <img src="https://github.com/user-attachments/assets/e3ee79e7-eabf-4cd8-b25c-fb4b31d8e012" width="250" />
 
 
 
@@ -67,10 +67,10 @@ Focus aims to streamline workflows, making it easier for photographers to access
 ## Diagrams
 
 - **Use Case Diagram**  
-  <img src="https://github.com/user-attachments/assets/4a8849af-061b-4da5-869d-702d94c46a31" alt="Use Case Diagram" width="700" />
+  <img src="https://github.com/user-attachments/assets/4a8849af-061b-4da5-869d-702d94c46a31" alt="Use Case Diagram" width="80%" />
 
 - **Class Diagram**  
-  <img src="https://github.com/user-attachments/assets/3fde31ab-ad29-433b-8449-c22e9e397d18" alt="Class Diagram" width="700" />
+  <img src="https://github.com/user-attachments/assets/3fde31ab-ad29-433b-8449-c22e9e397d18" alt="Class Diagram" width="80%" />
 
 ---
 ## Entity
