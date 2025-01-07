@@ -255,7 +255,8 @@ Focus aims to streamline workflows, making it easier for photographers to access
 
 
 
-Linked in : ![Bushra Ali Arishi]([https://github.com/user-attachments/assets/3fde31ab-ad29-433b-8449-c22e9e397d18](https://www.linkedin.com/in/bushra-ali-arishi/?locale=en_US))
+## LinkedIn
+[![Bushra Ali Arishi](https://img.shields.io/badge/LinkedIn-Bushra%20Ali%20Arishi-blue?logo=linkedin)](https://www.linkedin.com/in/bushra-ali-arishi/?locale=en_US)
 
 
 
