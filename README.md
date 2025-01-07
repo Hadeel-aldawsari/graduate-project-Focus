@@ -1,6 +1,6 @@
 ---
 
-# Focus SYSTEM
+# Focus system
 
 ---
 
