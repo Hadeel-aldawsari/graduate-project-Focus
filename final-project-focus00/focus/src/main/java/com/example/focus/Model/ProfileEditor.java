@@ -1,40 +1,29 @@
 package com.example.focus.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.Set;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "profile_editor")
 public class ProfileEditor {
     @Id
-    private Integer id;
+    private Long id;
 
-    @Size(max = 500, message = "Description cannot exceed 500 characters")
+    @Column(nullable = false, length = 255)
     private String description;
 
-    @PositiveOrZero(message = "Number of posts cannot be negative")
+    @Column(nullable = false)
     private Integer numberOfPosts;
 
-    @Column(nullable = true)
+    @Column(nullable = false, length = 255)
     private String imageURL;
 
     @OneToOne
     @MapsId
-    @JsonIgnore
     @JoinColumn(name = "id", referencedColumnName = "id")
-    private MyUser myUser;
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ProfileEditor")
-    private Set<Media> medias;
-
-
+    private Editor editor;
 }

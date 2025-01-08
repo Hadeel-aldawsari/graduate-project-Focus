@@ -2,10 +2,8 @@ package com.example.focus.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.Set;
@@ -16,8 +14,10 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 public class Editor {
+
     @Id
     private Integer id;
+
     @Column(nullable = false)
     private String name;
 
@@ -35,14 +35,12 @@ public class Editor {
     @JsonIgnore
     private MyUser myUser;
 
-
-    @OneToMany(mappedBy = "editor")
+    @OneToMany(mappedBy = "editor", cascade = CascadeType.ALL)
     private Set<RequestEditing> requests;
 
-    @OneToMany(mappedBy = "editor")
+    @OneToMany(mappedBy = "editor", cascade = CascadeType.ALL)
     private Set<OfferEditing> offerEditings;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "editor", cascade = CascadeType.ALL)
     private ProfileEditor profileEditor;
 }

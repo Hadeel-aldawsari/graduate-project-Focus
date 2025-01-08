@@ -3,10 +3,7 @@ package com.example.focus.Service;
 import com.example.focus.ApiResponse.ApiException;
 import com.example.focus.DTO.ProfileDTOin;
 import com.example.focus.Model.*;
-import com.example.focus.Repository.MediaRepository;
-import com.example.focus.Repository.MyUserRepository;
-import com.example.focus.Repository.ProfileEditorRepository;
-import com.example.focus.Repository.ProfilePhotographerRepository;
+import com.example.focus.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +24,7 @@ public class ProfileEditorService {
     private final MediaRepository mediaRepository;
     private final ProfilePhotographerRepository profilePhotographerRepository;
     private final MyUserRepository myUserRepository;
+    private final PhotographerRepository photographerRepository;
 
     public List<ProfileEditor> getAllProfiles() {
         List<ProfileEditor> profiles = profileEditorRepository.findAll();
@@ -61,8 +59,8 @@ public class ProfileEditorService {
 
     private  final String UPLOAD_PROFILE_DIR = "C:/Users/doly/Desktop/Upload/Profile/";
     public void updateProfile(Integer id, ProfileDTOin profileDTOin, MultipartFile file) throws IOException{
-        MyUser user=myUserRepository.findMyUserById(id);
-        if (user != null) {
+        Photographer photographer=photographerRepository.findPhotographersById(id);
+        if (photographer != null) {
 
             if (!isValidImageFile(file)) {
                 throw new ApiException("Invalid image file. Only JPG, PNG, and JPEG files are allowed");
@@ -74,12 +72,12 @@ public class ProfileEditorService {
 
             String filePathString = filePath.toString();
 
-           user.getProfilePhotographer().setDescription(profileDTOin.getDescription());
-           user.getProfilePhotographer().setImage(filePathString);
+            photographer.getProfilePhotographer().setDescription(profileDTOin.getDescription());
+            photographer.getProfilePhotographer().setImage(filePathString);
         } else {
             throw new ApiException("Profile Not Found");
         }
-        myUserRepository.save(user);
+        photographerRepository.save(photographer);
     }
 
 

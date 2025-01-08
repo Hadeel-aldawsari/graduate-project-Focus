@@ -1,11 +1,14 @@
 package com.example.focus.Service;
 
-
 import com.example.focus.ApiResponse.ApiException;
 import com.example.focus.DTO.EditorDTO;
 import com.example.focus.DTO.EditorDTOin;
-import com.example.focus.Model.*;
-import com.example.focus.Repository.*;
+import com.example.focus.Model.Editor;
+import com.example.focus.Model.MyUser;
+import com.example.focus.Model.ProfileEditor;
+import com.example.focus.Repository.EditorRepository;
+import com.example.focus.Repository.MyUserRepository;
+import com.example.focus.Repository.ProfileEditorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +21,7 @@ import java.util.List;
 public class EditorService {
     private final MyUserRepository myUserRepository;
     private final EditorRepository editorRepository;
-    private final ProfileEditorRepository  profileEditorRepository;
+    private final ProfileEditorRepository profileEditorRepository;
 
     public List<EditorDTO> getAllEditors() {
         List<Editor> editors = editorRepository.findAll();
@@ -37,10 +40,8 @@ public class EditorService {
         return editorDTOS;
     }
 
-
     public void EditorRegistration(EditorDTOin editorDTOin) {
-
-        String hashPass=new BCryptPasswordEncoder().encode(editorDTOin.getPassword());
+        String hashPass = new BCryptPasswordEncoder().encode(editorDTOin.getPassword());
 
         MyUser user = new MyUser();
         user.setUsername(editorDTOin.getUsername());
@@ -48,57 +49,51 @@ public class EditorService {
         user.setPassword(hashPass);
         user.setRole("EDITOR");
 
-        Editor editor=new Editor();
-        editor.setMyUser(user);
+        Editor editor = new Editor();
+
         editor.setName(editorDTOin.getName());
         editor.setCity(editorDTOin.getCity());
         editor.setPhoneNumber(editorDTOin.getPhoneNumber());
 
+        myUserRepository.save(user);
+        editor.setMyUser(user);
+        editorRepository.save(editor);
+        EditorProfile(user);
+
+    }
+    public void EditorProfile(MyUser newUser) {
 
         ProfileEditor profileEditor = new ProfileEditor();
-        profileEditor.setMyUser(user);
+        profileEditor.setEditor(editorRepository.findEditorById(newUser.getId()));
         profileEditor.setNumberOfPosts(0);
 
 
-        if(editor!=null && profileEditor != null && user!=null) {
-
-            profileEditorRepository.save(profileEditor);
-            editorRepository.save(editor);
-            myUserRepository.save(user);
-        }
-
+        profileEditorRepository.save(profileEditor);
     }
 
     public void updateEditor(Integer userid, EditorDTOin editorDTOin) {
         Editor existingEditor = editorRepository.findEditorById(userid);
-        if(existingEditor==null) {
-            throw new ApiException("editor not found");
+        if (existingEditor == null) {
+            throw new ApiException("Editor not found");
         }
 
-        if (existingEditor != null) {
-            existingEditor.setName(editorDTOin.getName());
-            existingEditor.setCity(editorDTOin.getCity());
-            existingEditor.getMyUser().setUsername(editorDTOin.getUsername());
-            existingEditor.getMyUser().setEmail(editorDTOin.getEmail());
-            existingEditor.setPhoneNumber(editorDTOin.getPhoneNumber());
-        }else {
-            throw new ApiException("Editor Not Found");
-        }
+        existingEditor.setName(editorDTOin.getName());
+        existingEditor.setCity(editorDTOin.getCity());
+        existingEditor.getMyUser().setUsername(editorDTOin.getUsername());
+        existingEditor.getMyUser().setEmail(editorDTOin.getEmail());
+        existingEditor.setPhoneNumber(editorDTOin.getPhoneNumber());
+
         editorRepository.save(existingEditor);
     }
 
-    public void deleteEditor(Integer userid,Integer editorid) {
+    public void deleteEditor(Integer userid, Integer editorid) {
+        MyUser myUser = myUserRepository.findMyUserById(userid);
         Editor editor = editorRepository.findEditorById(editorid);
-        if(editor==null) {
-            throw new ApiException("editor not found");
+
+        if (myUser == null || editor == null) {
+            throw new ApiException("User or Editor not found");
         }
 
-        MyUser myUser=myUserRepository.findMyUserById(userid);
-        if(myUser!=null) {
-            myUserRepository.delete(myUser);
-        }else{
-            throw new ApiException("user Not Found");
-        }
+        myUserRepository.delete(myUser);
     }
-
 }

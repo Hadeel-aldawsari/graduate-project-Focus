@@ -1,43 +1,29 @@
 package com.example.focus.Model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.Set;
-
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "profile_photographer")
 public class ProfilePhotographer {
     @Id
-    private Integer id;
+    private Long id;
 
-    @Size(max = 500, message = "Description cannot exceed 500 characters")
+    @Column(nullable = false, length = 255)
     private String description;
 
-    @PositiveOrZero(message = "Number of posts cannot be negative")
+    @Column(nullable = false)
     private Integer numberOfPosts;
 
-    private String image;  // URL of the image
+    @Column(nullable = false, length = 255)
+    private String image;
 
     @OneToOne
     @MapsId
-    @JsonIgnore
     @JoinColumn(name = "id", referencedColumnName = "id")
-    private MyUser myUser;
-
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ProfilePhotographer")
-    private Set<Media> medias;
-
+    private Photographer photographer;
 }

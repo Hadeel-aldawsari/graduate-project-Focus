@@ -2,17 +2,15 @@ package com.example.focus.Service;
 
 import com.example.focus.ApiResponse.ApiException;
 import com.example.focus.DTO.*;
-
 import com.example.focus.Model.*;
 import com.example.focus.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.example.focus.Service.EmailService;
+
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +21,8 @@ public class PhotographerService {
     private final RentToolsRepository rentToolsRepository;
     private final ToolRepository toolRepository;
     private final EmailService emailService;
-    private final StudioRepository studioRepository;
 
-
-    public  List<PhotographerDTO> getAllPhotographers() {
+    public List<PhotographerDTO> getAllPhotographers() {
         List<Photographer> photographers = photographerRepository.findAll();
         List<PhotographerDTO> photographerDTOS = new ArrayList<>();
 
@@ -43,17 +39,16 @@ public class PhotographerService {
         return photographerDTOS;
     }
 
-
     public void PhotographerRegistration(PhotographerDTOin photographerDTOin) {
-         String hashPass=new BCryptPasswordEncoder().encode(photographerDTOin.getPassword());
+        String hashPass = new BCryptPasswordEncoder().encode(photographerDTOin.getPassword());
 
-        MyUser checkUsername =myUserRepository.findMyUserByUsername(photographerDTOin.getUsername());
-        MyUser checkEmail =myUserRepository.findMyUserByEmail(photographerDTOin.getEmail());
-        if(checkUsername != null){
+        MyUser checkUsername = myUserRepository.findMyUserByUsername(photographerDTOin.getUsername());
+        MyUser checkEmail = myUserRepository.findMyUserByEmail(photographerDTOin.getEmail());
+        if (checkUsername != null) {
             throw new ApiException("Username already exists");
         }
-        if(checkEmail != null){
-            throw new ApiException("email already exists");
+        if (checkEmail != null) {
+            throw new ApiException("Email already exists");
         }
 
         MyUser user = new MyUser();
@@ -62,164 +57,159 @@ public class PhotographerService {
         user.setPassword(hashPass);
         user.setRole("PHOTOGRAPHER");
 
-        Photographer photographer=new Photographer();
-        photographer.setMyUser(user);
+        // Save MyUser first to ensure it's managed
+        MyUser savedUser = myUserRepository.save(user);
+
+        Photographer photographer = new Photographer();
+        photographer.setMyUser(savedUser); // Use the managed entity
         photographer.setName(photographerDTOin.getName());
         photographer.setCity(photographerDTOin.getCity());
         photographer.setPhoneNumber(photographerDTOin.getPhoneNumber());
 
-
-//        ProfilePhotographer profilePhotographer = new ProfilePhotographer();
-//        profilePhotographer.setMyUser(user);
-//        profilePhotographer.setNumberOfPosts(0);
+        // Save Photographer and ProfilePhotographer
+        photographerRepository.save(photographer);
+        photographerProfile(savedUser);
+    }
+    private void photographerProfile(MyUser newUser) {
 
         ProfilePhotographer profilePhotographer = new ProfilePhotographer();
-        profilePhotographer.setMyUser(user);
+        profilePhotographer.setPhotographer(photographerRepository.findPhotographersById(newUser.getId())); // Use the managed entity
         profilePhotographer.setNumberOfPosts(0);
 
-        if(photographer!=null && user!=null) {
-
-            myUserRepository.save(user);
-            photographerRepository.save(photographer);
-            profilePhotographerRepository.save(profilePhotographer);
-
-        }
-
-
+        // Save Photographer and ProfilePhotographer
+        profilePhotographerRepository.save(profilePhotographer);
     }
-
-
 
     public void updatePhotographer(Integer id, PhotographerDTOin photographerDTOin) {
         Photographer existingPhotographer = photographerRepository.findPhotographersById(id);
-        if (existingPhotographer != null) {
-            existingPhotographer.setName(photographerDTOin.getName());
-            existingPhotographer.setCity(photographerDTOin.getCity());
-            existingPhotographer.getMyUser().setUsername(photographerDTOin.getUsername());
-            existingPhotographer.getMyUser().setEmail(photographerDTOin.getEmail());
-            existingPhotographer.setPhoneNumber(photographerDTOin.getPhoneNumber());
-        }else {
+        if (existingPhotographer == null) {
             throw new ApiException("Photographer Not Found");
         }
+
+        existingPhotographer.setName(photographerDTOin.getName());
+        existingPhotographer.setCity(photographerDTOin.getCity());
+        existingPhotographer.getMyUser().setUsername(photographerDTOin.getUsername());
+        existingPhotographer.getMyUser().setEmail(photographerDTOin.getEmail());
+        existingPhotographer.setPhoneNumber(photographerDTOin.getPhoneNumber());
+
         photographerRepository.save(existingPhotographer);
-
     }
-
 
     public void deletePhotographer(Integer id) {
-        MyUser myUser=myUserRepository.findMyUserById(id);
-        Photographer photographer=photographerRepository.findPhotographersById(id);
-       // photographer.setMyUser(null);
-        ProfilePhotographer profilePhotographer=profilePhotographerRepository.findProfilePhotographerById(id);
-       // profilePhotographer.setMyUser(null);
-        myUser.setPhotographer(null);
-       // myUser.setProfilePhotographer(null);
-
-        if(myUser!=null) {
-            myUserRepository.delete(myUser);
-        }else{
+        MyUser myUser = myUserRepository.findMyUserById(id);
+        if (myUser == null) {
             throw new ApiException("Photographer Not Found");
         }
+
+        Photographer photographer = photographerRepository.findPhotographersById(id);
+        ProfilePhotographer profilePhotographer = profilePhotographerRepository.findProfilePhotographerById(id);
+
+        // Disassociate relationships
+        if (photographer != null) {
+            photographer.setMyUser(null);
+        }
+        if (profilePhotographer != null) {
+            profilePhotographer.setPhotographer(null);
+        }
+        myUser.setPhotographer(null);
+
+        myUserRepository.delete(myUser);
     }
 
-    public void rentToolRequest(Integer photographer_id, Integer tool_id, RentToolsDTOIn rentTool) {
-        Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
-        if(photographer==null) {
-            throw new ApiException("photographer not found");
+    public void rentToolRequest(Integer photographerId, Integer toolId, RentToolsDTOIn rentTool) {
+        Photographer photographer = photographerRepository.findPhotographersById(photographerId);
+        if (photographer == null) {
+            throw new ApiException("Photographer not found");
         }
 
-        Tool tool = toolRepository.findToolById(tool_id);
-        if(tool==null) {
-            throw new ApiException("tool not found");
+        Tool tool = toolRepository.findToolById(toolId);
+        if (tool == null) {
+            throw new ApiException("Tool not found");
         }
-        if (photographer_id.equals(tool.getPhotographer().getId())) {
+        if (photographerId.equals(tool.getPhotographer().getId())) {
             throw new ApiException("The photographer is the owner of the required tool.");
         }
 
-
         for (RentTools existingRent : rentToolsRepository.findAll()) {
-            for(int i=0;i<rentToolsRepository.findAll().size();i++) {
-                if (tool_id.equals(rentToolsRepository.findAll().get(i).getTool().getId()))  {
-                    if (!(rentTool.getEndDate().isBefore(existingRent.getStartDate()) || rentTool.getStartDate().isAfter(existingRent.getEndDate()))) {
-                        throw new ApiException("This tool is rented now for another photographer.");
-                    }
+            if (toolId.equals(existingRent.getTool().getId())) {
+                if (!(rentTool.getEndDate().isBefore(existingRent.getStartDate()) || rentTool.getStartDate().isAfter(existingRent.getEndDate()))) {
+                    throw new ApiException("This tool is rented now for another photographer.");
                 }
             }
-
         }
 
         if (rentTool.getStartDate().isAfter(rentTool.getEndDate())) {
-            throw new ApiException("The start date after end date.");
+            throw new ApiException("The start date is after the end date.");
         }
 
         long daysBetween = ChronoUnit.DAYS.between(rentTool.getStartDate(), rentTool.getEndDate());
-        Double totalPrice = tool.getRentalPrice()*(daysBetween+1);
+        Double totalPrice = tool.getRentalPrice() * (daysBetween + 1);
         rentTool.setRentPrice(totalPrice);
 
-
         RentTools rentTools = new RentTools();
-        tool.setNumberOfRentals(tool.getNumberOfRentals()+1);
+        tool.setNumberOfRentals(tool.getNumberOfRentals() + 1);
         rentTools.setStartDate(rentTool.getStartDate());
         rentTools.setEndDate(rentTool.getEndDate());
         rentTools.setOwner(tool.getPhotographer());
         rentTools.setRenter(photographer);
         rentTools.setRentPrice(totalPrice);
         rentTools.setTool(tool);
+
         rentToolsRepository.save(rentTools);
-
-        emailService.sendEmail(photographer.getMyUser().getEmail(),
-                "You have successfully rented the tool.",
-                "Dear " + photographer.getName()+",\n\n" +
-                        "We are pleased to inform you that the required tool has been successfully rented.\n" +
-                        "Tool Name : " + tool.getName()+"\n"+
-                        "Tool Description : " + tool.getDescription()+"\n"+
-                        "Tool Model Number : " + tool.getModelNumber()+"\n"+
-                        "Tool Brand : " + tool.getBrand()+"\n"+
-                        "Tool Brand : " +totalPrice +"SR \n"+
-                        "Best regards,\n" +
-                        "focus Team");
-
-
+        emailService.sendEmail(
+                photographer.getMyUser().getEmail(),
+                "Tool Rental Confirmation",
+                "Dear " + photographer.getName() + ",\n\n" +
+                        "The tool has been successfully rented.\n" +
+                        "Tool Name: " + tool.getName() + "\n" +
+                        "Total Price: " + totalPrice + " SR\n\n" +
+                        "Best regards,\nFocus Team"
+        );
     }
 
-    // view rent tools for photographer
-    public List<ToolDTO> viewMyRentTools(Integer photographer_id) {
-        Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
-        if(photographer==null) {
-            throw new ApiException("photographer not found");
+    public List<ToolDTO> viewMyRentTools(Integer photographerId) {
+        Photographer photographer = photographerRepository.findPhotographersById(photographerId);
+        if (photographer == null) {
+            throw new ApiException("Photographer not found");
         }
+
         List<ToolDTO> toolDTOS = new ArrayList<>();
-        List<RentTools> rentTools = rentToolsRepository.findAll();
-        for (RentTools rentTool : rentTools) {
+        for (RentTools rentTool : rentToolsRepository.findAll()) {
             if (rentTool.getRenter().getId().equals(photographer.getId())) {
                 Tool tool = rentTool.getTool();
-                ToolDTO toolDTO = new ToolDTO(tool.getName(),tool.getDescription(),tool.getCategory(),tool.getBrand(),tool.getNumberOfRentals(),tool.getModelNumber(),tool.getRentalPrice(),tool.getImageURL());
+                ToolDTO toolDTO = new ToolDTO(tool.getName(), tool.getDescription(), tool.getCategory(), tool.getBrand(),
+                        tool.getNumberOfRentals(), tool.getModelNumber(), tool.getRentalPrice(), tool.getImageURL());
                 toolDTOS.add(toolDTO);
-                return toolDTOS;
             }
         }
-        throw new ApiException("photographer not have rent tools");
+
+        if (toolDTOS.isEmpty()) {
+            throw new ApiException("Photographer has no rented tools");
+        }
+
+        return toolDTOS;
     }
 
-    // view rental tools photographer rent from owner
-    public List<ToolDTO> viewRentalTools(Integer photographer_id) {
-        Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
-        if(photographer==null) {
-            throw new ApiException("photographer not found");
+    public List<ToolDTO> viewRentalTools(Integer photographerId) {
+        Photographer photographer = photographerRepository.findPhotographersById(photographerId);
+        if (photographer == null) {
+            throw new ApiException("Photographer not found");
         }
 
         List<ToolDTO> toolDTOS = new ArrayList<>();
-        List<RentTools> rentTools = rentToolsRepository.findAll();
-        for (RentTools rentTool : rentTools) {
+        for (RentTools rentTool : rentToolsRepository.findAll()) {
             if (rentTool.getOwner().getId().equals(photographer.getId())) {
                 Tool tool = rentTool.getTool();
-                ToolDTO toolDTO = new ToolDTO(tool.getName(),tool.getDescription(),tool.getCategory(),tool.getBrand(),tool.getNumberOfRentals(),tool.getModelNumber(),tool.getRentalPrice(),tool.getImageURL());
+                ToolDTO toolDTO = new ToolDTO(tool.getName(), tool.getDescription(), tool.getCategory(), tool.getBrand(),
+                        tool.getNumberOfRentals(), tool.getModelNumber(), tool.getRentalPrice(), tool.getImageURL());
                 toolDTOS.add(toolDTO);
-                return toolDTOS;
             }
         }
-        throw new ApiException("photographer not have rental tools");
 
+        if (toolDTOS.isEmpty()) {
+            throw new ApiException("Photographer has no rental tools");
+        }
+
+        return toolDTOS;
     }
-
 }

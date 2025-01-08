@@ -38,7 +38,7 @@ public class StudioController {
     @PutMapping("/upload-image")
     public ResponseEntity updateProfile(@AuthenticationPrincipal MyUser myUser, @RequestParam("file") MultipartFile file){
         try {
-            studioService.UploadImage(myUser.getId(),file);
+            studioService.uploadImage(myUser.getId(),file);
 
         }  catch (IOException e) {
             return ResponseEntity.status(500).body("Error occurred while uploading the file.");
