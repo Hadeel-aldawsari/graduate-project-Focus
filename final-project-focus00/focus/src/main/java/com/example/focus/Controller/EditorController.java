@@ -30,7 +30,7 @@ public class EditorController {
     //primitive all
     @PostMapping("/register")
     public ResponseEntity EditorRegistration(@RequestBody @Valid EditorDTOin editor) {
-        editorService.EditorRegistration(editor);
+        editorService.UserRegistration(editor);
         return ResponseEntity.ok(new ApiResponse("Editor added successfully"));
     }
 

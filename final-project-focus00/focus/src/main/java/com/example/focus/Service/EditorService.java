@@ -40,7 +40,7 @@ public class EditorService {
         return editorDTOS;
     }
 
-    public void EditorRegistration(EditorDTOin editorDTOin) {
+    public void UserRegistration(EditorDTOin editorDTOin) {
         String hashPass = new BCryptPasswordEncoder().encode(editorDTOin.getPassword());
 
         MyUser user = new MyUser();
@@ -49,13 +49,18 @@ public class EditorService {
         user.setPassword(hashPass);
         user.setRole("EDITOR");
 
+
+        myUserRepository.save(user);
+        EditorRegistration(editorDTOin, user);
+
+    }
+    private void EditorRegistration(EditorDTOin editorDTOin,MyUser user) {
+
         Editor editor = new Editor();
 
         editor.setName(editorDTOin.getName());
         editor.setCity(editorDTOin.getCity());
         editor.setPhoneNumber(editorDTOin.getPhoneNumber());
-
-        myUserRepository.save(user);
         editor.setMyUser(user);
         editorRepository.save(editor);
         EditorProfile(user);
